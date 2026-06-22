@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  DENTIST
+  STAFF
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(STAFF)
+  phone     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  appointments Appointment[]
+
+  @@map("users")
+}
+
+model Patient {
+  id         String   @id @default(uuid())
+  name       String
+  email      String?  @unique
+  phone      String
+  document   String?  @unique @map("document")
+  birthDate  DateTime? @map("birth_date")
+  address    String?
+  notes      String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  appointments Appointment[]
+
+  @@map("patients")
+}
+
+model Appointment {
+  id        String            @id @default(uuid())
+  date      DateTime
+  status    AppointmentStatus @default(SCHEDULED)
+  notes     String?
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  patientId String @map("patient_id")
+  dentistId String @map("dentist_id")
+
+  patient Patient @relation(fields: [patientId], references: [id])
+  dentist User    @relation(fields: [dentistId], references: [id])
+
+  @@map("appointments")
+}
+
+model Treatment {
+  id          String   @id @default(uuid())
+  description String
+  value       Decimal
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("treatments")
+}
