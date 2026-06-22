@@ -1,54 +1,48 @@
 # OdontoGestão
 
-Sistema completo de gestão para clínicas odontológicas de pequeno e médio porte.
-
-> **AI-First** — arquitetura moderna com foco em produtividade e boas práticas.
+Sistema de gestão para clínicas odontológicas de pequeno e médio porte.
 
 ---
 
 ## Tech Stack
 
-### Backend
-| Tecnologia      | Descrição                            |
-|-----------------|--------------------------------------|
-| **TypeScript**  | Linguagem principal                  |
-| **Express**     | Framework HTTP                       |
-| **Prisma**      | ORM e migrations                     |
-| **PostgreSQL**  | Banco de dados relacional            |
-
-### Frontend
-| Tecnologia      | Descrição                            |
-|-----------------|--------------------------------------|
-| **React**       | Biblioteca de UI                     |
-| **TypeScript**  | Linguagem principal                  |
-| **Vite**        | Bundler e dev server                 |
+| Camada    | Tecnologia                              |
+|-----------|-----------------------------------------|
+| Backend   | TypeScript, Express, Prisma, PostgreSQL |
+| Frontend  | TypeScript, React, Vite                 |
+| Infra     | Docker, Docker Compose                  |
 
 ---
 
-## Estrutura do Projeto
+## Estrutura
 
 ```
 odontogesta/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/     # Handlers das rotas
-│   │   ├── routes/          # Definição de rotas
-│   │   ├── services/        # Lógica de negócio
-│   │   └── index.ts         # Entry point
+│   │   ├── controllers/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── index.ts
 │   ├── prisma/
-│   │   ├── schema.prisma    # Modelos do banco
-│   │   └── migrations/      # Migrations geradas
-│   ├── generated/           # Prisma Client (gerado)
-│   ├── .env                 # Variáveis de ambiente
+│   │   └── schema.prisma
+│   ├── generated/prisma/       # Prisma Client (gerado)
+│   ├── Dockerfile
+│   ├── docker-entrypoint.sh
+│   ├── prisma.config.ts
+│   ├── tsconfig.json
 │   └── package.json
 ├── frontend/
 │   ├── src/
-│   │   ├── services/        # Comunicação com API
-│   │   ├── types/           # Tipos compartilhados
-│   │   ├── App.tsx          # Componente principal
-│   │   └── main.tsx         # Entry point
-│   ├── index.html
+│   │   ├── services/api.ts
+│   │   ├── types/
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── Dockerfile              # (opcional — build standalone)
+│   ├── nginx.conf
+│   ├── vite.config.ts
 │   └── package.json
+├── docker-compose.yml
 └── README.md
 ```
 
@@ -57,19 +51,24 @@ odontogesta/
 ## Como Rodar
 
 ### Pré-requisitos
+
 - Node.js 20+
-- Docker e Docker Compose
+- Docker + Docker Compose
 - npm
 
-### 1. Suba o banco + backend (Docker)
+### 1. Banco + Backend (Docker)
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-O backend ficará disponível em `http://localhost:3000`.
+Isso sobe:
+- **PostgreSQL 16** na porta `5432`
+- **Backend** na porta `3000`
 
-### 2. Inicie o frontend (manual)
+Migrations rodam automaticamente no startup do backend.
+
+### 2. Frontend (manual)
 
 ```bash
 cd frontend
@@ -77,34 +76,36 @@ npm install
 npm run dev
 ```
 
-Aplicação em `http://localhost:5173` — o Vite faz proxy de `/api` para o backend em `localhost:3000`.
+Acessar `http://localhost:5173`.  
+O Vite faz proxy de `/api` para `http://localhost:3000`.
 
 ---
 
 ## Scripts
 
 ### Backend
-| Comando                        | Ação                          |
-|--------------------------------|-------------------------------|
-| `npm run dev`                  | Inicia servidor em dev (hot reload) |
-| `npm run build`                | Compila TypeScript            |
-| `npm start`                    | Inicia servidor em produção   |
-| `npm run prisma:generate`      | Gera Prisma Client            |
-| `npm run prisma:migrate`       | Executa migrations            |
-| `npm run prisma:studio`        | Abre Prisma Studio (GUI)      |
+
+| Comando                   | Ação                       |
+|---------------------------|----------------------------|
+| `npm run dev`             | Dev server (hot reload)    |
+| `npm run build`           | Compilar TypeScript        |
+| `npm run prisma:generate` | Gerar Prisma Client        |
+| `npm run prisma:migrate`  | Executar migrations        |
+| `npm run prisma:studio`   | Prisma Studio (GUI)        |
 
 ### Frontend
-| Comando       | Ação                               |
-|---------------|------------------------------------|
-| `npm run dev` | Inicia dev server (porta 5173)     |
-| `npm run build` | Compila para produção           |
+
+| Comando       | Ação                    |
+|---------------|-------------------------|
+| `npm run dev` | Dev server (porta 5173) |
+| `npm run build` | Build para produção   |
 
 ---
 
 ## Modelos do Banco
 
-- **User** — Dentistas, administradores e staff
-- **Patient** — Pacientes da clínica
+- **User** — Dentistas, admins e staff
+- **Patient** — Pacientes
 - **Appointment** — Agendamentos
 - **Treatment** — Tabela de tratamentos
 
