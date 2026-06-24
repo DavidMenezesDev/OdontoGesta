@@ -24,69 +24,87 @@ enum AppointmentStatus {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      UserRole @default(RECEP)
-  phone     String?
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid())
+  enterpriseId String   @map("enterprise_id")
+  name         String
+  email        String   @unique
+  password     String
+  role         UserRole @default(RECEP)
+  phone        String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
+  enterprise   Enterprise   @relation(fields: [enterpriseId], references: [id])
   appointments Appointment[]
 
   @@map("users")
 }
 
 model Patient {
-  id         String   @id @default(uuid())
-  name       String
-  email      String?  @unique
-  phone      String
-  document   String?  @unique @map("document")
-  birthDate  DateTime? @map("birth_date")
-  address    String?
-  notes      String?
-  active     Boolean  @default(true)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid())
+  enterpriseId String   @map("enterprise_id")
+  name         String
+  email        String?  @unique
+  phone        String
+  document     String?  @unique @map("document")
+  birthDate    DateTime? @map("birth_date")
+  address      String?
+  notes        String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
+  enterprise   Enterprise   @relation(fields: [enterpriseId], references: [id])
   appointments Appointment[]
 
   @@map("patients")
 }
 
 model Appointment {
-  id        String            @id @default(uuid())
-  date      DateTime
-  status    AppointmentStatus @default(SCHEDULED)
-  notes     String?
-  createdAt DateTime          @default(now()) @map("created_at")
-  updatedAt DateTime          @updatedAt @map("updated_at")
+  id           String            @id @default(uuid())
+  enterpriseId String            @map("enterprise_id")
+  date         DateTime
+  status       AppointmentStatus @default(SCHEDULED)
+  notes        String?
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
 
   patientId String @map("patient_id")
   dentistId String @map("dentist_id")
 
-  patient Patient @relation(fields: [patientId], references: [id])
-  dentist User    @relation(fields: [dentistId], references: [id])
+  enterprise Enterprise @relation(fields: [enterpriseId], references: [id])
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  dentist   User       @relation(fields: [dentistId], references: [id])
 
   @@map("appointments")
 }
 
 model Treatment {
-  id          String   @id @default(uuid())
-  description String
-  value       Decimal
-  notes       String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(uuid())
+  enterpriseId String   @map("enterprise_id")
+  description  String
+  value        Decimal
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  enterprise Enterprise @relation(fields: [enterpriseId], references: [id])
 
   @@map("treatments")
 }
 
 model Enterprise {
-  id          String   @id @default(uuid())
-  cnpj String?
-  nome String?
+  id    String  @id @default(uuid())
+  cnpj  String?
+  nome  String?
+  phone String?
+  active Boolean @default(true)
+
+  users        User[]
+  patients     Patient[]
+  appointments Appointment[]
+  treatments   Treatment[]
+
+  @@map("enterprises")
 }
