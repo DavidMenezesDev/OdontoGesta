@@ -28,7 +28,7 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      UserRole @default(STAFF)
+  role      UserRole @default(RECEP)
   phone     String?
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
@@ -83,4 +83,10 @@ model Treatment {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("treatments")
+}
+
+model Enterprise {
+  id          String   @id @default(uuid())
+  cnpj String?
+  nome String?
 }

@@ -4,14 +4,14 @@ services:
     container_name: odontogesta-db
     environment:
       POSTGRES_DB: odontogesta
-      POSTGRES_USER: odontogesta
-      POSTGRES_PASSWORD: odontogesta
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Dmenez3ZEs
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U odontogesta"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -23,7 +23,7 @@ services:
       context: ./backend
     container_name: odontogesta-backend
     environment:
-      DATABASE_URL: postgresql://odontogesta:odontogesta@db:5432/odontogesta?schema=public
+      DATABASE_URL: postgresql://postgres:Dmenez3ZEs@localhost:5432/odontogesta?schema=public
       PORT: 3000
       NODE_ENV: production
     ports:
