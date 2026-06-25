@@ -1,26 +1,29 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import pg from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../generated/prisma/client.js";
-
-const pool = new pg.Pool({ connectionString: process.env["DATABASE_URL"] });
-const adapter = new PrismaPg(pool);
-export const prisma = new PrismaClient({ adapter });
+import cookieParser from "cookie-parser";
+import { prisma } from "./lib/prisma.js";
+import createAdminRouter from "./routes/Users/createAdmin.js";
+import authRouter from "./routes/Auth/login.js";
 
 const app = express();
 const PORT = process.env["PORT"] ?? 3000;
 
-app.use(cors());
+const CORS_ORIGIN = process.env["FRONTEND_URL"] ?? "http://localhost:5173";
+app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (_req, res) => {
   res.json({ message: "OdontoGesta API" });
 });
 
+app.use("/api/users", createAdminRouter);
+app.use("/api/auth", authRouter);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+export { prisma };
 export default app;

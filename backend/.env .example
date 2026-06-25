@@ -1,0 +1,4 @@
+DATABASE_URL="postgresql://postgres:Dmenez3ZEs@0.0.0.0:5432/odontogesta?schema=public"
+PORT=3000
+JWT_SECRET="odontogesta-jwt-secret-key-2026"
+FRONTEND_URL="http://localhost:5173"
