@@ -32,11 +32,6 @@ export interface CreateAdminResult {
 export async function createAdmin(params: CreateAdminParams): Promise<CreateAdminResult> {
   const { name, email, password, phone, companyName, cnpj } = params;
 
-  const existingAdmin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
-  if (existingAdmin) {
-    throw new Error("Já existe um administrador cadastrado no sistema.");
-  }
-
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
     throw new Error("Este email já está cadastrado.");

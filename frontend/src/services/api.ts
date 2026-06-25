@@ -20,3 +20,14 @@ export async function postApi<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
 }
+
+export async function putApi<T>(path: string, body: unknown): Promise<T> {
+  return request<T>(path, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function deleteApi<T>(path: string): Promise<T> {
+  return request<T>(path, { method: "DELETE" });
+}

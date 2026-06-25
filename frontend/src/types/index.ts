@@ -22,15 +22,32 @@ export interface User {
 export interface Patient {
   id: string;
   name: string;
+  gender?: string;
+  document?: string;
+  nationality?: string;
   email?: string;
   phone: string;
-  document?: string;
+  recordNumber?: string;
+  occupation?: string;
   birthDate?: string;
   address?: string;
+  tags: string[];
+  guardianName?: string;
+  guardianBirthDate?: string;
+  guardianDocument?: string;
+  guardianPhone?: string;
+  healthPlanId?: string;
+  healthPlan?: { id: string; name: string };
   notes?: string;
   active: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface HealthPlan {
+  id: string;
+  name: string;
+  active: boolean;
 }
 
 export interface Appointment {

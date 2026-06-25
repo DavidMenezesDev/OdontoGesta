@@ -82,7 +82,7 @@ function RegisterAdmin({ onBackToLogin }: RegisterAdminProps) {
       const message =
         err instanceof Error
           ? err.message.includes("409")
-            ? "Este email já está cadastrado ou já existe um administrador."
+            ? "Este email já está cadastrado."
             : err.message
           : "Erro ao cadastrar. Tente novamente.";
       setError(message);
@@ -121,7 +121,7 @@ function RegisterAdmin({ onBackToLogin }: RegisterAdminProps) {
       <div className="card form-card">
         <h2>Criar conta de administrador</h2>
         <p className="form-subtitle">
-          Essa será a primeira conta do sistema. A empresa será criada automaticamente.
+          Crie sua conta de administrador. Uma nova empresa será registrada automaticamente.
         </p>
 
         {error && <div className="form-error">{error}</div>}

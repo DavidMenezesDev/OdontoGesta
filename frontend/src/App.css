@@ -1,66 +1,214 @@
-.app {
+/* ─── Sidebar Layout ─── */
+
+.sidebar-layout {
+  display: flex;
   min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
 }
 
-.header {
-  background: var(--color-surface);
+.sidebar-brand {
+  padding: 1.5rem 1.25rem;
   border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow);
 }
 
-.header-inner {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.header h1 {
-  font-size: 1.25rem;
+.sidebar-brand h1 {
+  font-size: 1.125rem;
   font-weight: 700;
 }
 
-.badge {
+.sidebar-nav {
+  flex: 1;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar-nav-item {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sidebar-nav-item:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.sidebar-nav-item.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.sidebar-user {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-user-name {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-logout {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: var(--color-bg);
+}
+
+.sidebar-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1.25rem 2rem;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.sidebar-header p {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.125rem;
+}
+
+.sidebar-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 960px;
+  width: 100%;
+}
+
+/* ─── Patients Table ─── */
+
+.patients-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.patients-table thead {
+  background: var(--color-bg);
+}
+
+.patients-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.patients-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.patients-table tbody tr:hover {
+  background: var(--color-bg);
+}
+
+.patients-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ─── Details Grid ─── */
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.detail-label {
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-}
-
-.badge--online {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.badge--offline {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.main {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  flex: 1;
-}
-
-.greeting {
-  margin-bottom: 2rem;
-}
-
-.greeting h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.greeting p {
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
   margin-top: 0.25rem;
 }
+
+/* ─── Table Actions ─── */
+
+.table-actions {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.btn-action {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.btn-action:hover {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* ─── Shared ─── */
 
 .cards {
   display: grid;
@@ -238,6 +386,83 @@ fieldset {
 .detail-group p {
   font-size: 0.875rem;
   line-height: 1.8;
+}
+
+/* ─── Patient Form ─── */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-row textarea,
+.form-textarea {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.15s;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-row textarea:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.form-row textarea::placeholder {
+  color: #94a3b8;
+}
+
+.form-select {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.15s;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tag:hover {
+  background: #c7d2fe;
+}
+
+.card-action {
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.card-action:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
 }
 
 /* ─── Login / Layout ─── */

@@ -42,23 +42,48 @@ model User {
 }
 
 model Patient {
+  id              String    @id @default(uuid())
+  enterpriseId    String    @map("enterprise_id")
+  name            String
+  gender          String?
+  document        String?   @unique @map("document")
+  nationality     String?
+  email           String?   @unique
+  phone           String
+  recordNumber    String?   @map("record_number")
+  occupation      String?
+  birthDate       DateTime? @map("birth_date")
+  address         String?
+  tags            Json?
+  guardianName        String?   @map("guardian_name")
+  guardianBirthDate   DateTime? @map("guardian_birth_date")
+  guardianDocument    String?   @map("guardian_document")
+  guardianPhone       String?   @map("guardian_phone")
+  healthPlanId    String?   @map("health_plan_id")
+  notes           String?
+  active          Boolean   @default(true)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  enterprise   Enterprise   @relation(fields: [enterpriseId], references: [id])
+  appointments Appointment[]
+  healthPlan   HealthPlan?  @relation(fields: [healthPlanId], references: [id])
+
+  @@map("patients")
+}
+
+model HealthPlan {
   id           String   @id @default(uuid())
   enterpriseId String   @map("enterprise_id")
   name         String
-  email        String?  @unique
-  phone        String
-  document     String?  @unique @map("document")
-  birthDate    DateTime? @map("birth_date")
-  address      String?
-  notes        String?
   active       Boolean  @default(true)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  enterprise   Enterprise   @relation(fields: [enterpriseId], references: [id])
-  appointments Appointment[]
+  enterprise Enterprise @relation(fields: [enterpriseId], references: [id])
+  patients   Patient[]
 
-  @@map("patients")
+  @@map("health_plans")
 }
 
 model Appointment {
@@ -105,6 +130,7 @@ model Enterprise {
   patients     Patient[]
   appointments Appointment[]
   treatments   Treatment[]
+  healthPlans  HealthPlan[]
 
   @@map("enterprises")
 }
