@@ -11,7 +11,7 @@ function Dashboard() {
         <div className="card-label">Cadastrar novo paciente</div>
       </div>
       <div className="card">
-        <h3>Consultas</h3>
+        <h3>Agendamentos</h3>
         <div className="card-value">—</div>
         <div className="card-label">Hoje</div>
       </div>

@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Patients from "./pages/Patients";
 import PatientRegister from "./pages/PatientRegister";
 import PatientDetails from "./pages/PatientDetails";
+import Appointments from "./pages/Appointments";
 import Layout from "./components/Layout";
 import { usePath, matchPath } from "./lib/router";
 import "./App.css";
@@ -38,6 +39,14 @@ function AppContent() {
       return (
         <Layout>
           <Patients />
+        </Layout>
+      );
+    }
+
+    if (path === "/Agendamentos") {
+      return (
+        <Layout>
+          <Appointments />
         </Layout>
       );
     }
