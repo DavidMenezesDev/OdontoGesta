@@ -10,7 +10,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Início" },
   { href: "/clientes", label: "Pacientes" },
-  { href: "/consultas", label: "Consultas" },
+  { href: "/Agendamentos", label: "Agendamentos" },
   { href: "/tratamentos", label: "Tratamentos" },
   { href: "/planos", label: "Planos" },
   { href: "/usuarios", label: "Usuários" },
@@ -19,7 +19,7 @@ const NAV_ITEMS: NavItem[] = [
 function getActiveHref(path: string): string {
   if (path === "/") return "/";
   if (path.startsWith("/clientes")) return "/clientes";
-  if (path.startsWith("/consultas")) return "/consultas";
+  if (path.startsWith("/Agendamentos")) return "/Agendamentos";
   if (path.startsWith("/tratamentos")) return "/tratamentos";
   if (path.startsWith("/planos")) return "/planos";
   if (path.startsWith("/usuarios")) return "/usuarios";
@@ -32,7 +32,7 @@ function getTitle(path: string): string {
   if (path.startsWith("/clientes") && path.endsWith("/editar")) return "Editar Paciente";
   if (path.startsWith("/clientes") && path !== "/clientes") return "Detalhes do Paciente";
   if (path.startsWith("/clientes")) return "Pacientes";
-  if (path.startsWith("/consultas")) return "Consultas";
+  if (path.startsWith("/Agendamentos")) return "Agendamentos";
   if (path.startsWith("/tratamentos")) return "Tratamentos";
   if (path.startsWith("/planos")) return "Planos";
   if (path.startsWith("/usuarios")) return "Usuários";
@@ -45,7 +45,7 @@ function getSubtitle(path: string): string {
   if (path.startsWith("/clientes") && path.endsWith("/editar")) return "Altere os dados do paciente";
   if (path.startsWith("/clientes") && path !== "/clientes") return "Informações completas do paciente";
   if (path.startsWith("/clientes")) return "Gerencie seus pacientes";
-  if (path.startsWith("/consultas")) return "Gerencie suas consultas";
+  if (path.startsWith("/Agendamentos")) return "Gerencie suas Agendamentos";
   if (path.startsWith("/tratamentos")) return "Gerencie seus tratamentos";
   if (path.startsWith("/planos")) return "Gerencie seus planos";
   if (path.startsWith("/usuarios")) return "Gerencie os usuários do sistema";

@@ -28,21 +28,21 @@ function Patients() {
   });
 
   return (
-    <>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-        <div className="form-row" style={{ margin: 0, width: "320px" }}>
-          <input
-            placeholder="Buscar por nome, CPF ou telefone..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+    <div className="patients-page">
+      <div className="card patients-card">
+        <div className="patients-toolbar">
+          <div className="form-row" style={{ margin: 0, flex: "1 1 320px", maxWidth: "400px" }}>
+            <input
+              placeholder="Buscar por nome, CPF ou telefone..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <button type="button" className="btn btn-primary" onClick={() => navigate("/clientes/novo")} style={{ margin: 0 }}>
+            + Adicionar Paciente
+          </button>
         </div>
-        <button type="button" className="btn btn-primary" onClick={() => navigate("/clientes/novo")} style={{ margin: 0 }}>
-          + Adicionar Paciente
-        </button>
-      </div>
 
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         {loading ? (
           <div style={{ padding: "2rem", textAlign: "center", color: "var(--color-text-secondary)" }}>
             Carregando...
@@ -52,50 +52,52 @@ function Patients() {
             {search ? "Nenhum paciente encontrado." : "Nenhum paciente cadastrado."}
           </div>
         ) : (
-          <table className="patients-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Telefone</th>
-                <th>Plano</th>
-                <th style={{ width: "120px" }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((patient) => (
-                <tr key={patient.id}>
-                  <td><strong>{patient.name}</strong></td>
-                  <td>{patient.document ?? "—"}</td>
-                  <td>{patient.phone}</td>
-                  <td>{patient.healthPlan?.name ?? "—"}</td>
-                  <td>
-                    <div className="table-actions">
-                      <button
-                        type="button"
-                        className="btn-action"
-                        onClick={() => navigate(`/clientes/${patient.id}`)}
-                        title="Visualizar"
-                      >
-                        Ver
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-action"
-                        onClick={() => navigate(`/clientes/${patient.id}/editar`)}
-                        title="Editar"
-                      >
-                        Editar
-                      </button>
-                    </div>
-                  </td>
+          <div className="patients-table-wrapper">
+            <table className="patients-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>CPF</th>
+                  <th>Telefone</th>
+                  <th>Plano</th>
+                  <th style={{ width: "120px" }}>Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map((patient) => (
+                  <tr key={patient.id}>
+                    <td><strong>{patient.name}</strong></td>
+                    <td>{patient.document ?? "—"}</td>
+                    <td>{patient.phone}</td>
+                    <td>{patient.healthPlan?.name ?? "—"}</td>
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          type="button"
+                          className="btn-action"
+                          onClick={() => navigate(`/clientes/${patient.id}`)}
+                          title="Visualizar"
+                        >
+                          Ver
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-action"
+                          onClick={() => navigate(`/clientes/${patient.id}/editar`)}
+                          title="Editar"
+                        >
+                          Editar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

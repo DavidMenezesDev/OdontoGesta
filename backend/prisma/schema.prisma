@@ -90,8 +90,10 @@ model Appointment {
   id           String            @id @default(uuid())
   enterpriseId String            @map("enterprise_id")
   date         DateTime
+  endTime      DateTime?         @map("end_time")
   status       AppointmentStatus @default(SCHEDULED)
   notes        String?
+  tag          String?
   createdAt    DateTime          @default(now()) @map("created_at")
   updatedAt    DateTime          @updatedAt @map("updated_at")
 

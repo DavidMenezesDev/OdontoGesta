@@ -53,10 +53,14 @@ export interface HealthPlan {
 export interface Appointment {
   id: string;
   date: string;
+  endTime?: string;
   status: AppointmentStatus;
   notes?: string;
+  tag?: string;
   patientId: string;
   dentistId: string;
+  patient: { id: string; name: string; phone: string };
+  dentist: { id: string; name: string };
   createdAt: string;
   updatedAt: string;
 }
