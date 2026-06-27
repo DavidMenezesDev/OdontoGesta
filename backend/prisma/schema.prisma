@@ -122,11 +122,20 @@ model Treatment {
 }
 
 model Enterprise {
-  id    String  @id @default(uuid())
-  cnpj  String?
-  nome  String?
-  phone String?
-  active Boolean @default(true)
+  id      String  @id @default(uuid())
+  cnpj    String?
+  nome    String?
+  phone   String?
+  email        String?
+  street       String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+  zipCode      String?
+  logo         String?
+  active  Boolean @default(true)
 
   users        User[]
   patients     Patient[]

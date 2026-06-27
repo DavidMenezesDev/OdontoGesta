@@ -65,6 +65,23 @@ export interface Appointment {
   updatedAt: string;
 }
 
+export interface Enterprise {
+  id: string;
+  cnpj: string | null;
+  nome: string | null;
+  phone: string | null;
+  email: string | null;
+  street: string | null;
+  number: string | null;
+  complement: string | null;
+  neighborhood: string | null;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
+  logo: string | null;
+  active: boolean;
+}
+
 export interface Treatment {
   id: string;
   description: string;

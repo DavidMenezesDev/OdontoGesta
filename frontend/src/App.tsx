@@ -7,6 +7,7 @@ import Patients from "./pages/Patients";
 import PatientRegister from "./pages/PatientRegister";
 import PatientDetails from "./pages/PatientDetails";
 import Appointments from "./pages/Appointments";
+import Settings from "./pages/Settings";
 import Layout from "./components/Layout";
 import { usePath, matchPath } from "./lib/router";
 import "./App.css";
@@ -47,6 +48,14 @@ function AppContent() {
       return (
         <Layout>
           <Appointments />
+        </Layout>
+      );
+    }
+
+    if (path === "/configuracoes") {
+      return (
+        <Layout>
+          <Settings />
         </Layout>
       );
     }
