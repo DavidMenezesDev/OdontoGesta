@@ -24,7 +24,7 @@ services:
     container_name: odontogesta-backend
     environment:
       DATABASE_URL: postgresql://postgres:Dmenez3ZEs@db:5432/odontogesta?schema=public
-      FRONTEND_URL: https://odontogesta.iasergipe.com.br/
+      FRONTEND_URL: https://odontogesta.iasergipe.com.br
       PORT: 3000
       NODE_ENV: production
     ports:
