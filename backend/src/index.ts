@@ -15,7 +15,7 @@ import permissionsRouter from "./routes/Permissions/index.js";
 const app = express();
 const PORT = process.env["PORT"] ?? 3000;
 
-const CORS_ORIGIN = process.env["FRONTEND_URL"];
+const CORS_ORIGIN = process.env.FRONTEND_URL;
 app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
