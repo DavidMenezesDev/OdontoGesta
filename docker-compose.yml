@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Dmenez3ZEs
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -23,7 +23,7 @@ services:
       context: ./backend
     container_name: odontogesta-backend
     environment:
-      DATABASE_URL: postgresql://postgres:Dmenez3ZEs@db:5432/odontogesta?schema=public
+      DATABASE_URL: postgresql://postgres:Dmenez3ZEs@db:5433/odontogesta?schema=public
       PORT: 3000
       NODE_ENV: production
     ports:
