@@ -29,6 +29,27 @@ export interface CreateAdminResult {
   };
 }
 
+const ALL_PERMISSIONS = [
+  { key: "patient:view", name: "Visualizar Pacientes", module: "patients" },
+  { key: "patient:create", name: "Criar Pacientes", module: "patients" },
+  { key: "patient:edit", name: "Editar Pacientes", module: "patients" },
+  { key: "patient:delete", name: "Excluir Pacientes", module: "patients" },
+  { key: "appointment:view", name: "Visualizar Agendamentos", module: "appointments" },
+  { key: "appointment:create", name: "Criar Agendamentos", module: "appointments" },
+  { key: "appointment:edit", name: "Editar Agendamentos", module: "appointments" },
+  { key: "appointment:cancel", name: "Cancelar Agendamentos", module: "appointments" },
+  { key: "user:view", name: "Visualizar Usuários", module: "users" },
+  { key: "user:create", name: "Criar Usuários", module: "users" },
+  { key: "user:edit", name: "Editar Usuários", module: "users" },
+  { key: "healthplan:view", name: "Visualizar Planos", module: "healthplans" },
+  { key: "healthplan:manage", name: "Gerenciar Planos", module: "healthplans" },
+  { key: "enterprise:view", name: "Visualizar Empresa", module: "enterprise" },
+  { key: "enterprise:edit", name: "Editar Empresa", module: "enterprise" },
+  { key: "treatment:view", name: "Visualizar Tratamentos", module: "treatments" },
+  { key: "treatment:manage", name: "Gerenciar Tratamentos", module: "treatments" },
+  { key: "financial:view", name: "Visualizar Financeiro", module: "financial" },
+];
+
 export async function createAdmin(params: CreateAdminParams): Promise<CreateAdminResult> {
   const { name, email, password, phone, companyName, cnpj } = params;
 
@@ -58,6 +79,20 @@ export async function createAdmin(params: CreateAdminParams): Promise<CreateAdmi
         phone: phone ?? null,
       },
     });
+
+    for (const p of ALL_PERMISSIONS) {
+      const permission = await tx.permission.upsert({
+        where: { key: p.key },
+        update: { name: p.name, module: p.module },
+        create: { key: p.key, name: p.name, module: p.module },
+      });
+
+      await tx.rolePermission.upsert({
+        where: { role_permissionId: { role: "ADMIN", permissionId: permission.id } },
+        update: {},
+        create: { role: "ADMIN", permissionId: permission.id },
+      });
+    }
 
     return { enterprise, user };
   });
