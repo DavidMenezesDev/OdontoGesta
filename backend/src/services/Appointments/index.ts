@@ -84,8 +84,14 @@ export async function createAppointment(params: CreateAppointmentParams, enterpr
 export async function listAppointments(
   enterpriseId: string,
   filters: { date?: string; year?: string; month?: string },
+  userId?: string,
+  role?: string,
 ): Promise<AppointmentResult[]> {
   const where: any = { enterpriseId };
+
+  if (role === "DENTIST" && userId) {
+    where.dentistId = userId;
+  }
 
   if (filters.date) {
     const day = new Date(filters.date);
@@ -117,9 +123,20 @@ export async function listAppointments(
   return appointments.map(mapAppointment);
 }
 
-export async function getAppointmentById(id: string, enterpriseId: string): Promise<AppointmentResult | null> {
+export async function getAppointmentById(
+  id: string,
+  enterpriseId: string,
+  userId?: string,
+  role?: string,
+): Promise<AppointmentResult | null> {
+  const where: any = { id, enterpriseId };
+
+  if (role === "DENTIST" && userId) {
+    where.dentistId = userId;
+  }
+
   const appointment = await prisma.appointment.findFirst({
-    where: { id, enterpriseId },
+    where,
     include: {
       patient: { select: { id: true, name: true, phone: true } },
       dentist: { select: { id: true, name: true } },

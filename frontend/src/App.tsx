@@ -7,7 +7,7 @@ import Patients from "./pages/Patients";
 import PatientRegister from "./pages/PatientRegister";
 import PatientDetails from "./pages/PatientDetails";
 import Appointments from "./pages/Appointments";
-import Settings from "./pages/Settings";
+import Ajustes from "./pages/Ajustes";
 import Layout from "./components/Layout";
 import { usePath, matchPath } from "./lib/router";
 import "./App.css";
@@ -52,10 +52,10 @@ function AppContent() {
       );
     }
 
-    if (path === "/configuracoes") {
+    if (path === "/ajustes") {
       return (
         <Layout>
-          <Settings />
+          <Ajustes />
         </Layout>
       );
     }

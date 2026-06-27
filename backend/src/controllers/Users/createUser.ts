@@ -4,11 +4,6 @@ import { createUser as createUserService } from "../../services/Users/createUser
 const ALLOWED_ROLES = ["DENTIST", "RECEP", "FINANCE"] as const;
 
 export async function createUser(req: Request, res: Response) {
-  if (req.user?.role !== "ADMIN") {
-    res.status(403).json({ error: "Apenas administradores podem criar usuários." });
-    return;
-  }
-
   const { name, email, password, role, phone } = req.body;
 
   if (!name || !email || !password || !role) {
@@ -33,7 +28,7 @@ export async function createUser(req: Request, res: Response) {
 
   try {
     const result = await createUserService({
-      enterpriseId: req.user.enterpriseId,
+      enterpriseId: req.user!.enterpriseId,
       name,
       email,
       password,

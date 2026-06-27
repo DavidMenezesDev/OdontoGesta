@@ -1,4 +1,4 @@
-export type UserRole = "ADMIN" | "DENTIST" | "STAFF";
+export type UserRole = "ADMIN" | "DENTIST" | "RECEP" | "FINANCE";
 
 export type AppointmentStatus =
   | "SCHEDULED"

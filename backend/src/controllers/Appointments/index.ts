@@ -62,7 +62,7 @@ export async function list(req: Request, res: Response) {
     const year = typeof req.query["year"] === "string" ? req.query["year"] : undefined;
     const month = typeof req.query["month"] === "string" ? req.query["month"] : undefined;
 
-    const result = await listAppointmentsService(enterpriseId, { date, year, month });
+    const result = await listAppointmentsService(enterpriseId, { date, year, month }, req.user?.id, req.user?.role);
     res.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erro interno do servidor.";
@@ -79,7 +79,7 @@ export async function getById(req: Request, res: Response) {
       return;
     }
 
-    const result = await getAppointmentByIdService(id, enterpriseId);
+    const result = await getAppointmentByIdService(id, enterpriseId, req.user?.id, req.user?.role);
     if (!result) {
       res.status(404).json({ error: "Agendamento não encontrado." });
       return;

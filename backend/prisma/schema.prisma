@@ -37,6 +37,7 @@ model User {
 
   enterprise   Enterprise   @relation(fields: [enterpriseId], references: [id])
   appointments Appointment[]
+  userPermissions UserPermission[]
 
   @@map("users")
 }
@@ -119,6 +120,48 @@ model Treatment {
   enterprise Enterprise @relation(fields: [enterpriseId], references: [id])
 
   @@map("treatments")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  name        String
+  description String?
+  module      String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid())
+  role         String
+  permissionId String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([role, permissionId])
+  @@map("role_permissions")
+}
+
+model UserPermission {
+  id           String   @id @default(uuid())
+  userId       String
+  permissionId String
+  granted      Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([userId, permissionId])
+  @@map("user_permissions")
 }
 
 model Enterprise {

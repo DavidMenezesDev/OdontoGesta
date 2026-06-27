@@ -104,8 +104,22 @@ export async function createPatient(params: CreatePatientParams, enterpriseId: s
   return mapPatient(patient);
 }
 
-export async function listPatients(enterpriseId: string, search?: string): Promise<PatientResult[]> {
+export async function listPatients(
+  enterpriseId: string,
+  search?: string,
+  userId?: string,
+  role?: string,
+): Promise<PatientResult[]> {
   const where: any = { enterpriseId, active: true };
+
+  if (role === "DENTIST" && userId) {
+    const patientIds = await prisma.appointment.findMany({
+      where: { enterpriseId, dentistId: userId },
+      select: { patientId: true },
+      distinct: ["patientId"],
+    });
+    where.id = { in: patientIds.map((p) => p.patientId) };
+  }
 
   if (search) {
     where.OR = [
@@ -125,9 +139,23 @@ export async function listPatients(enterpriseId: string, search?: string): Promi
   return patients.map(mapPatient);
 }
 
-export async function getPatientById(id: string, enterpriseId: string): Promise<PatientResult | null> {
+export async function getPatientById(
+  id: string,
+  enterpriseId: string,
+  userId?: string,
+  role?: string,
+): Promise<PatientResult | null> {
+  const where: any = { id, enterpriseId };
+
+  if (role === "DENTIST" && userId) {
+    const hasAppointment = await prisma.appointment.findFirst({
+      where: { enterpriseId, patientId: id, dentistId: userId },
+    });
+    if (!hasAppointment) return null;
+  }
+
   const patient = await prisma.patient.findFirst({
-    where: { id, enterpriseId },
+    where,
     include: { healthPlan: { select: { id: true, name: true } } },
   });
 

@@ -13,7 +13,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/Agendamentos", label: "Agendamentos" },
   { href: "/tratamentos", label: "Tratamentos" },
   { href: "/planos", label: "Planos" },
-  { href: "/usuarios", label: "Usuários" },
 ];
 
 function getActiveHref(path: string): string {
@@ -22,7 +21,7 @@ function getActiveHref(path: string): string {
   if (path.startsWith("/Agendamentos")) return "/Agendamentos";
   if (path.startsWith("/tratamentos")) return "/tratamentos";
   if (path.startsWith("/planos")) return "/planos";
-  if (path.startsWith("/usuarios")) return "/usuarios";
+  if (path.startsWith("/ajustes")) return "/ajustes";
   return "/";
 }
 
@@ -35,8 +34,7 @@ function getTitle(path: string): string {
   if (path.startsWith("/Agendamentos")) return "Agendamentos";
   if (path.startsWith("/tratamentos")) return "Tratamentos";
   if (path.startsWith("/planos")) return "Planos";
-  if (path.startsWith("/usuarios")) return "Usuários";
-  if (path.startsWith("/configuracoes")) return "Configurações";
+  if (path.startsWith("/ajustes")) return "Ajustes";
   return "Dashboard";
 }
 
@@ -49,8 +47,7 @@ function getSubtitle(path: string): string {
   if (path.startsWith("/Agendamentos")) return "Gerencie suas Agendamentos";
   if (path.startsWith("/tratamentos")) return "Gerencie seus tratamentos";
   if (path.startsWith("/planos")) return "Gerencie seus planos";
-  if (path.startsWith("/usuarios")) return "Gerencie os usuários do sistema";
-  if (path.startsWith("/configuracoes")) return "Informações da clínica";
+  if (path.startsWith("/ajustes")) return "Configurações do sistema";
   return "Visão geral do sistema";
 }
 
@@ -95,9 +92,9 @@ function Layout({ children }: LayoutProps) {
             <button
               type="button"
               className="sidebar-config-btn"
-              onClick={() => navigate("/configuracoes")}
+              onClick={() => navigate("/ajustes")}
             >
-              Configurações
+              Ajustes
             </button>
             <button type="button" className="btn btn-outline sidebar-logout" onClick={logout}>
               Sair

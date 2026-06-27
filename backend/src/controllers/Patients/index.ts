@@ -48,7 +48,7 @@ export async function list(req: Request, res: Response) {
   try {
     const enterpriseId = req.user!.enterpriseId;
     const search = typeof req.query["search"] === "string" ? req.query["search"] : undefined;
-    const result = await listPatientsService(enterpriseId, search);
+    const result = await listPatientsService(enterpriseId, search, req.user?.id, req.user?.role);
     res.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erro interno do servidor.";
@@ -64,7 +64,7 @@ export async function getById(req: Request, res: Response) {
       res.status(400).json({ error: "ID do paciente não informado." });
       return;
     }
-    const result = await getPatientByIdService(id, enterpriseId);
+    const result = await getPatientByIdService(id, enterpriseId, req.user?.id, req.user?.role);
 
     if (!result) {
       res.status(404).json({ error: "Paciente não encontrado." });
