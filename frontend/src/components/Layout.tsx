@@ -36,6 +36,7 @@ function getTitle(path: string): string {
   if (path.startsWith("/tratamentos")) return "Tratamentos";
   if (path.startsWith("/planos")) return "Planos";
   if (path.startsWith("/usuarios")) return "Usuários";
+  if (path.startsWith("/configuracoes")) return "Configurações";
   return "Dashboard";
 }
 
@@ -49,6 +50,7 @@ function getSubtitle(path: string): string {
   if (path.startsWith("/tratamentos")) return "Gerencie seus tratamentos";
   if (path.startsWith("/planos")) return "Gerencie seus planos";
   if (path.startsWith("/usuarios")) return "Gerencie os usuários do sistema";
+  if (path.startsWith("/configuracoes")) return "Informações da clínica";
   return "Visão geral do sistema";
 }
 
@@ -89,9 +91,18 @@ function Layout({ children }: LayoutProps) {
 
         <div className="sidebar-user">
           <span className="sidebar-user-name">{user?.name}</span>
-          <button type="button" className="btn btn-outline sidebar-logout" onClick={logout}>
-            Sair
-          </button>
+          <div className="sidebar-user-actions">
+            <button
+              type="button"
+              className="sidebar-config-btn"
+              onClick={() => navigate("/configuracoes")}
+            >
+              Configurações
+            </button>
+            <button type="button" className="btn btn-outline sidebar-logout" onClick={logout}>
+              Sair
+            </button>
+          </div>
         </div>
       </aside>
 
