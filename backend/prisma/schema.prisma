@@ -164,6 +164,53 @@ model UserPermission {
   @@map("user_permissions")
 }
 
+model Question {
+  id            String   @id @default(uuid())
+  enterpriseId  String   @map("enterprise_id")
+  pergunta      String
+  tipo          Int      @default(1)
+  alerta        Int      @default(1)
+  labelPergunta String?  @map("label_pergunta")
+  labelAlerta   String?  @map("label_alerta")
+  opcoes        Json?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  enterprise Enterprise         @relation(fields: [enterpriseId], references: [id])
+  anamneses  AnamnesisQuestion[]
+
+  @@map("questions")
+}
+
+model Anamnesis {
+  id           String   @id @default(uuid())
+  enterpriseId String   @map("enterprise_id")
+  nome         String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  enterprise Enterprise         @relation(fields: [enterpriseId], references: [id])
+  questions  AnamnesisQuestion[]
+
+  @@map("anamneses")
+}
+
+model AnamnesisQuestion {
+  id           String    @id @default(uuid())
+  anamnesisId  String    @map("anamnesis_id")
+  questionId   String    @map("question_id")
+  ordem        Int       @default(0)
+  obrigatorio  Boolean   @default(false)
+
+  anamnesis Anamnesis @relation(fields: [anamnesisId], references: [id], onDelete: Cascade)
+  question  Question  @relation(fields: [questionId], references: [id])
+
+  @@unique([anamnesisId, questionId])
+  @@map("anamnesis_questions")
+}
+
 model Enterprise {
   id      String  @id @default(uuid())
   cnpj    String?
@@ -185,6 +232,8 @@ model Enterprise {
   appointments Appointment[]
   treatments   Treatment[]
   healthPlans  HealthPlan[]
+  questions    Question[]
+  anamneses    Anamnesis[]
 
   @@map("enterprises")
 }

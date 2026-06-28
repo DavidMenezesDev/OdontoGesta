@@ -2,14 +2,16 @@ import { useState } from "react";
 import Settings from "./Settings";
 import Permissions from "./Permissions";
 import Users from "./Users";
+import AnamnesisList from "./AnamnesisList";
 import { useAuth } from "../contexts/AuthContext";
 
-type Tab = "clinica" | "permissoes" | "usuarios";
+type Tab = "clinica" | "permissoes" | "usuarios" | "anamneses";
 
 const TABS: { key: Tab; label: string; adminOnly?: boolean }[] = [
   { key: "clinica", label: "Informações da Clínica" },
   { key: "permissoes", label: "Permissões", adminOnly: true },
   { key: "usuarios", label: "Usuários", adminOnly: true },
+  { key: "anamneses", label: "Anamneses", adminOnly: true },
 ];
 
 function Ajustes() {
@@ -38,6 +40,7 @@ function Ajustes() {
         {activeTab === "clinica" && <Settings />}
         {activeTab === "permissoes" && <Permissions />}
         {activeTab === "usuarios" && <Users />}
+        {activeTab === "anamneses" && <AnamnesisList />}
       </div>
     </div>
   );

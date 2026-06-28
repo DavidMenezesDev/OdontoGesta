@@ -19,6 +19,7 @@ const MODULE_LABELS: Record<string, string> = {
   enterprise: "Empresa",
   treatments: "Tratamentos",
   financial: "Financeiro",
+  anamnesis: "Anamneses",
 };
 
 function Permissions() {

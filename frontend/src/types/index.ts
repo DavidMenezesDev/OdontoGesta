@@ -90,3 +90,31 @@ export interface Treatment {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Question {
+  id: string;
+  pergunta: string;
+  tipo: number;
+  alerta: number;
+  labelPergunta: string | null;
+  labelAlerta: string | null;
+  opcoes: unknown;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AnamnesisQuestion {
+  id: string;
+  ordem: number;
+  obrigatorio: boolean;
+  question: Question;
+}
+
+export interface Anamnesis {
+  id: string;
+  nome: string;
+  active: boolean;
+  createdAt: string;
+  questions: AnamnesisQuestion[];
+}

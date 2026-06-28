@@ -26,6 +26,12 @@ const PERMISSIONS = [
   { key: "treatment:view", name: "Visualizar Tratamentos", module: "treatments" },
   { key: "treatment:manage", name: "Gerenciar Tratamentos", module: "treatments" },
   { key: "financial:view", name: "Visualizar Financeiro", module: "financial" },
+  { key: "anamnesis:view", name: "Visualizar Anamneses", module: "anamnesis" },
+  { key: "anamnesis:create", name: "Criar Anamneses", module: "anamnesis" },
+  { key: "anamnesis:edit", name: "Editar Anamneses", module: "anamnesis" },
+  { key: "anamnesis:delete", name: "Excluir Anamneses", module: "anamnesis" },
+  { key: "question:view", name: "Visualizar Perguntas", module: "anamnesis" },
+  { key: "question:manage", name: "Gerenciar Perguntas", module: "anamnesis" },
 ];
 
 const ROLE_PERMISSIONS: Record<string, string[]> = {
@@ -38,6 +44,8 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
     "appointment:edit",
     "healthplan:view",
     "treatment:view",
+    "anamnesis:view",
+    "question:view",
   ],
   RECEP: [
     "patient:view",
