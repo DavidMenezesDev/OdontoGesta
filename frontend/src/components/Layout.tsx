@@ -27,6 +27,7 @@ function getActiveHref(path: string): string {
 
 function getTitle(path: string): string {
   if (path === "/") return "Dashboard";
+  if (path.startsWith("/clientes") && path.endsWith("/ficha")) return "Ficha do Paciente";
   if (path.startsWith("/clientes/novo")) return "Cadastro de Paciente";
   if (path.startsWith("/clientes") && path.endsWith("/editar")) return "Editar Paciente";
   if (path.startsWith("/clientes") && path !== "/clientes") return "Detalhes do Paciente";
@@ -40,6 +41,7 @@ function getTitle(path: string): string {
 
 function getSubtitle(path: string): string {
   if (path === "/") return "Visão geral do sistema";
+  if (path.startsWith("/clientes") && path.endsWith("/ficha")) return "Prontuário completo do paciente";
   if (path.startsWith("/clientes/novo")) return "Preencha os dados do paciente";
   if (path.startsWith("/clientes") && path.endsWith("/editar")) return "Altere os dados do paciente";
   if (path.startsWith("/clientes") && path !== "/clientes") return "Informações completas do paciente";

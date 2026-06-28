@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Patients from "./pages/Patients";
 import PatientRegister from "./pages/PatientRegister";
 import PatientDetails from "./pages/PatientDetails";
+import PatientRecord from "./pages/PatientRecord";
 import Appointments from "./pages/Appointments";
 import Ajustes from "./pages/Ajustes";
 import Layout from "./components/Layout";
@@ -27,6 +28,7 @@ function AppContent() {
   if (isAuthenticated) {
     const patientView = matchPath("/clientes/:id", path);
     const patientEdit = matchPath("/clientes/:id/editar", path);
+    const patientFicha = matchPath("/clientes/:id/ficha", path);
 
     if (path === "/") {
       return (
@@ -64,6 +66,14 @@ function AppContent() {
       return (
         <Layout>
           <PatientRegister />
+        </Layout>
+      );
+    }
+
+    if (patientFicha) {
+      return (
+        <Layout>
+          <PatientRecord patientId={patientFicha["id"]!} />
         </Layout>
       );
     }

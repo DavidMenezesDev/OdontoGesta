@@ -69,6 +69,7 @@ model Patient {
   enterprise   Enterprise   @relation(fields: [enterpriseId], references: [id])
   appointments Appointment[]
   healthPlan   HealthPlan?  @relation(fields: [healthPlanId], references: [id])
+  anamneses    PatientAnamnesis[]
 
   @@map("patients")
 }
@@ -177,8 +178,9 @@ model Question {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  enterprise Enterprise         @relation(fields: [enterpriseId], references: [id])
-  anamneses  AnamnesisQuestion[]
+  enterprise   Enterprise         @relation(fields: [enterpriseId], references: [id])
+  anamneses    AnamnesisQuestion[]
+  patientAnswers AnamnesisAnswer[]
 
   @@map("questions")
 }
@@ -193,6 +195,7 @@ model Anamnesis {
 
   enterprise Enterprise         @relation(fields: [enterpriseId], references: [id])
   questions  AnamnesisQuestion[]
+  patientAnamneses PatientAnamnesis[]
 
   @@map("anamneses")
 }
@@ -209,6 +212,36 @@ model AnamnesisQuestion {
 
   @@unique([anamnesisId, questionId])
   @@map("anamnesis_questions")
+}
+
+model PatientAnamnesis {
+  id          String   @id @default(uuid())
+  patientId   String   @map("patient_id")
+  anamnesisId String   @map("anamnesis_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  patient   Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  anamnesis Anamnesis          @relation(fields: [anamnesisId], references: [id])
+  answers   AnamnesisAnswer[]
+
+  @@unique([patientId, anamnesisId])
+  @@map("patient_anamneses")
+}
+
+model AnamnesisAnswer {
+  id                 String   @id @default(uuid())
+  patientAnamnesisId String   @map("patient_anamnesis_id")
+  questionId         String   @map("question_id")
+  resposta           String?
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  patientAnamnesis PatientAnamnesis @relation(fields: [patientAnamnesisId], references: [id], onDelete: Cascade)
+  question         Question        @relation(fields: [questionId], references: [id])
+
+  @@unique([patientAnamnesisId, questionId])
+  @@map("anamnesis_answers")
 }
 
 model Enterprise {

@@ -60,7 +60,7 @@ function Patients() {
                   <th>CPF</th>
                   <th>Telefone</th>
                   <th>Plano</th>
-                  <th style={{ width: "120px" }}>Ações</th>
+                  <th style={{ width: "180px" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -79,6 +79,14 @@ function Patients() {
                           title="Visualizar"
                         >
                           Ver
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-action"
+                          onClick={() => navigate(`/clientes/${patient.id}/ficha`)}
+                          title="Ficha do Paciente"
+                        >
+                          Ficha
                         </button>
                         <button
                           type="button"

@@ -12,6 +12,7 @@ import enterpriseRouter from "./routes/Enterprise/index.js";
 import createUsersRouter from "./routes/Users/createUsers.js";
 import permissionsRouter from "./routes/Permissions/index.js";
 import anamnesisRouter from "./routes/Anamnesis/index.js";
+import patientAnamnesisRouter from "./routes/PatientAnamnesis/index.js";
 
 const app = express();
 const PORT = process.env["PORT"] ?? 3000;
@@ -35,6 +36,7 @@ app.use("/api/enterprise", enterpriseRouter);
 app.use("/api/users", createUsersRouter);
 app.use("/api/permissions", permissionsRouter);
 app.use("/api/anamnesis", anamnesisRouter);
+app.use("/api/patients", patientAnamnesisRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

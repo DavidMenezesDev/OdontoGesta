@@ -91,6 +91,28 @@ export interface Treatment {
   updatedAt: string;
 }
 
+export interface AnamnesisAnswerResult {
+  id: string;
+  questionId: string;
+  pergunta: string;
+  tipo: number;
+  alerta: number;
+  labelPergunta: string | null;
+  labelAlerta: string | null;
+  opcoes: unknown;
+  resposta: string | null;
+}
+
+export interface PatientAnamnesisResult {
+  id: string;
+  patientId: string;
+  anamnesisId: string;
+  anamnesisNome: string;
+  createdAt: string;
+  updatedAt: string;
+  answers: AnamnesisAnswerResult[];
+}
+
 export interface Question {
   id: string;
   pergunta: string;
