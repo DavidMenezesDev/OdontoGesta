@@ -6,7 +6,6 @@ import type {
   Patient,
   Anamnesis,
   PatientAnamnesisResult,
-  AnamnesisAnswerResult,
   Enterprise,
 } from "../types";
 
