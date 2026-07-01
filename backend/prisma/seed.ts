@@ -1,7 +1,12 @@
 import "dotenv/config";
+import { readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const pool = new pg.Pool({ connectionString: process.env["DATABASE_URL"] });
 const adapter = new PrismaPg(pool);
@@ -63,7 +68,22 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
   ],
 };
 
-async function seed() {
+const CBHPO_MAP: Record<string, string> = {
+  "1": "DIAGNOST",
+  "2": "ODONTO_CIRUR",
+  "3": "ODONTO_PREVENTIVA",
+  "4": "ODONTO_REST",
+  "5": "ODONTO_PEDIAT",
+  "6": "ORTOD_ORTOP",
+  "7": "PAC_ESPEC",
+};
+
+function mapTreatmentClass(codigo: string): string {
+  const prefix = codigo.charAt(0);
+  return CBHPO_MAP[prefix] ?? "NONE";
+}
+
+async function seedPermissions() {
   const permissionMap = new Map<string, string>();
 
   for (const p of PERMISSIONS) {
@@ -89,6 +109,111 @@ async function seed() {
   }
 
   console.log("Permissões e role_permissions populadas com sucesso.");
+}
+
+async function seedTreatments() {
+  const cbhpoPath = join(__dirname, "..", "..", "cbhpo.json");
+  const raw = JSON.parse(readFileSync(cbhpoPath, "utf-8"));
+  const procedimentos: Array<{
+    codigo: string;
+    procedimento: string;
+    valor_total: number;
+  }> = raw.procedimentos;
+
+  const enterprises = await prisma.enterprise.findMany();
+
+  if (enterprises.length === 0) {
+    console.log("Nenhuma empresa cadastrada. Pulando seed de tratamentos.");
+    return;
+  }
+
+  let created = 0;
+  let skipped = 0;
+
+  for (const enterprise of enterprises) {
+    for (const proc of procedimentos) {
+      const existing = await prisma.treatment.findFirst({
+        where: {
+          enterpriseId: enterprise.id,
+          description: proc.procedimento,
+        },
+      });
+
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      await prisma.treatment.create({
+        data: {
+          enterpriseId: enterprise.id,
+          class: mapTreatmentClass(proc.codigo) as any,
+          description: proc.procedimento,
+          value: proc.valor_total,
+          cost: 0,
+        },
+      });
+      created++;
+    }
+  }
+
+  console.log(
+    `Tratamentos CBHPO: ${created} criados, ${skipped} já existentes (ignorados).`
+  );
+}
+
+async function seedHealthPlans() {
+  const enterprises = await prisma.enterprise.findMany();
+
+  if (enterprises.length === 0) {
+    console.log("Nenhuma empresa cadastrada. Pulando seed de planos.");
+    return;
+  }
+
+  for (const enterprise of enterprises) {
+    const treatments = await prisma.treatment.findMany({
+      where: { enterpriseId: enterprise.id },
+      select: { id: true },
+    });
+
+    if (treatments.length === 0) {
+      console.log(`Nenhum tratamento para empresa ${enterprise.id}. Pulando.`);
+      continue;
+    }
+
+    let plan = await prisma.healthPlan.findFirst({
+      where: { enterpriseId: enterprise.id, name: "Particular" },
+    });
+
+    if (!plan) {
+      plan = await prisma.healthPlan.create({
+        data: {
+          enterpriseId: enterprise.id,
+          name: "Particular",
+          treatments: { connect: treatments.map((t) => ({ id: t.id })) },
+        },
+      });
+      console.log(
+        `Plano "Particular" criado para empresa ${enterprise.id} com ${treatments.length} tratamentos.`
+      );
+    } else {
+      await prisma.healthPlan.update({
+        where: { id: plan.id },
+        data: {
+          treatments: { connect: treatments.map((t) => ({ id: t.id })) },
+        },
+      });
+      console.log(
+        `Plano "Particular" atualizado para empresa ${enterprise.id} (${treatments.length} tratamentos).`
+      );
+    }
+  }
+}
+
+async function seed() {
+  await seedPermissions();
+  await seedTreatments();
+  await seedHealthPlans();
 }
 
 seed()

@@ -82,13 +82,44 @@ export interface Enterprise {
   active: boolean;
 }
 
+export type TreatmentClass =
+  | "NONE"
+  | "DIAGNOST"
+  | "ODONTO_CIRUR"
+  | "ODONTO_PREVENTIVA"
+  | "ODONTO_REST"
+  | "ODONTO_PEDIAT"
+  | "ORTOD_ORTOP"
+  | "PAC_ESPEC";
+
 export interface Treatment {
   id: string;
+  class: TreatmentClass;
   description: string;
   value: number;
-  notes?: string;
+  cost: number;
+  notes: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PatientTreatment {
+  id: string;
+  patientId: string;
+  dentistId: string;
+  treatmentId: string;
+  healthPlanId: string | null;
+  date: string;
+  value: number;
+  teeth: number[];
+  faces: string[];
+  notes: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  dentist: { id: string; name: string };
+  treatment: { id: string; description: string; value: number };
+  healthPlan: { id: string; name: string } | null;
 }
 
 export interface AnamnesisAnswerResult {

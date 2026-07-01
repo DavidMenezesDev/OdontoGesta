@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { fetchApi, postApi, putApi } from "../services/api";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { fetchApi, postApi, putApi, deleteApi } from "../services/api";
 import { useNavigate } from "../lib/router";
 import { exportAnamnesisPdf, type PdfAnswer } from "../services/pdf";
 import type {
@@ -7,17 +7,21 @@ import type {
   Anamnesis,
   PatientAnamnesisResult,
   Enterprise,
+  User,
+  HealthPlan,
+  Treatment,
+  PatientTreatment,
 } from "../types";
 
 interface PatientRecordProps {
   patientId: string;
 }
 
-type Tab = "anamnesis" | "clinical" | "odontogram";
+type Tab = "anamnesis" | "treatment" | "odontogram";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "anamnesis", label: "Anamnese" },
-  { key: "clinical", label: "Exame Clínico" },
+  { key: "treatment", label: "Tratamento" },
   { key: "odontogram", label: "Odontograma" },
 ];
 
@@ -213,7 +217,10 @@ function PatientRecord({ patientId }: PatientRecordProps) {
             hasSavedAnamnesis={!!selectedTemplate}
           />
         )}
-        {activeTab !== "anamnesis" && (
+        {activeTab === "treatment" && (
+          <TreatmentTab patientId={patientId} />
+        )}
+        {activeTab === "odontogram" && (
           <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
             <p style={{ color: "var(--color-text-secondary)" }}>
               Em desenvolvimento...
@@ -427,6 +434,653 @@ function AnamnesisTab({
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+const PERMANENT_TEETH = [
+  18, 17, 16, 15, 14, 13, 12, 11,
+  21, 22, 23, 24, 25, 26, 27, 28,
+  31, 32, 33, 34, 35, 36, 37, 38,
+  41, 42, 43, 44, 45, 46, 47, 48,
+];
+
+const DECIDUOUS_TEETH = [
+  55, 54, 53, 52, 51,
+  61, 62, 63, 64, 65,
+  71, 72, 73, 74, 75,
+  85, 84, 83, 82, 81,
+];
+
+const PERMANENT_SUPERIOR = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
+const PERMANENT_INFERIOR = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
+const DECIDUOUS_SUPERIOR = [55, 54, 53, 52, 51, 61, 62, 63, 64, 65];
+const DECIDUOUS_INFERIOR = [85, 84, 83, 82, 81, 71, 72, 73, 74, 75];
+
+const FACES_OPTIONS = [
+  { value: "M", label: "M (Mesial)" },
+  { value: "O/I", label: "O/I (Oclusal/Incisal)" },
+  { value: "D", label: "D (Distal)" },
+  { value: "V", label: "V (Vestibular)" },
+  { value: "L/P", label: "L/P (Lingual/Palatino)" },
+  { value: "T", label: "T (Tecido)" },
+];
+
+interface TreatmentTabProps {
+  patientId: string;
+}
+
+function TreatmentTab({ patientId }: TreatmentTabProps) {
+  const [treatments, setTreatments] = useState<PatientTreatment[]>([]);
+  const [dentists, setDentists] = useState<User[]>([]);
+  const [healthPlans, setHealthPlans] = useState<HealthPlan[]>([]);
+  const [catalog, setCatalog] = useState<Treatment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+
+  const [dentistId, setDentistId] = useState("");
+  const [healthPlanId, setHealthPlanId] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [treatmentId, setTreatmentId] = useState("");
+  const [value, setValue] = useState("");
+  const [teeth, setTeeth] = useState<number[]>([]);
+  const [teethOpen, setTeethOpen] = useState(false);
+  const [treatmentOpen, setTreatmentOpen] = useState(false);
+  const [faces, setFaces] = useState<string[]>([]);
+  const [notes, setNotes] = useState("");
+  const [dentitionType, setDentitionType] = useState<"permanente" | "deciduo">("permanente");
+  const [formDentition, setFormDentition] = useState<"permanente" | "deciduo">("permanente");
+  const svgRef = useRef<HTMLObjectElement>(null);
+
+  const updateToothColors = useCallback(() => {
+    const obj = svgRef.current;
+    if (!obj?.contentDocument) return;
+    const doc = obj.contentDocument;
+
+    const toothColor: Record<number, string> = {};
+    const toothPrio: Record<number, number> = {};
+    const priority: Record<string, number> = { COMPLETED: 3, IN_PROGRESS: 2, PLANNED: 1 };
+    const colorMap: Record<string, string> = { COMPLETED: "#3b82f6", IN_PROGRESS: "#e97c2e", PLANNED: "#e97c2e" };
+
+    for (const t of treatments) {
+      if (t.status === "CANCELLED") continue;
+      const prio = priority[t.status] ?? 0;
+      for (const toothNum of t.teeth) {
+        if (prio > (toothPrio[toothNum] ?? 0)) {
+          toothPrio[toothNum] = prio;
+          toothColor[toothNum] = colorMap[t.status];
+        }
+      }
+    }
+
+    const selected = new Set(Object.keys(toothColor).map(Number));
+    for (const el of doc.querySelectorAll("[id^='tooth-']")) {
+      const num = Number(el.id.replace("tooth-", ""));
+      const color = selected.has(num) ? (toothColor[num] ?? "#FFFFFF") : "#FFFFFF";
+      for (const path of el.querySelectorAll("path")) {
+        const f = path.getAttribute("fill");
+        if (f === "#FFFFFF" || f === "white" || f === "#3b82f6" || f === "#f97316") {
+          path.setAttribute("fill", color);
+        }
+      }
+      for (const circle of el.querySelectorAll("circle")) {
+        const f = circle.getAttribute("fill");
+        if (f === "#FFFFFF" || f === "white" || f === "#3b82f6" || f === "#f97316") {
+          circle.setAttribute("fill", color);
+        }
+      }
+    }
+  }, [treatments]);
+
+  useEffect(() => {
+    if (svgRef.current?.contentDocument) updateToothColors();
+  }, [updateToothColors]);
+
+  useEffect(() => {
+    if (!teethOpen && !treatmentOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (teethOpen && !target.closest(".teeth-dropdown")) setTeethOpen(false);
+      if (treatmentOpen && !target.closest(".treatment-dropdown")) setTreatmentOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [teethOpen, treatmentOpen]);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [treatmentsData, dentistsData, plansData, catalogData] =
+        await Promise.all([
+          fetchApi<PatientTreatment[]>(`/patients/${patientId}/treatments`),
+          fetchApi<User[]>("/users/dentists"),
+          fetchApi<HealthPlan[]>("/health-plans"),
+          fetchApi<Treatment[]>("/treatments"),
+        ]);
+      setTreatments(treatmentsData);
+      setDentists(dentistsData);
+      setHealthPlans(plansData);
+      setCatalog(catalogData);
+      if (dentistsData.length > 0) setDentistId(dentistsData[0]!.id);
+    } catch {
+      setError("Erro ao carregar dados.");
+    } finally {
+      setLoading(false);
+    }
+  }, [patientId]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    if (!treatmentId) return;
+    const selected = catalog.find((t) => t.id === treatmentId);
+    if (selected) setValue(String(selected.value));
+  }, [treatmentId, catalog]);
+
+  const filteredCatalog = catalog.filter((t) =>
+    t.description.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const toggleTooth = (tooth: number) => {
+    setTeeth((prev) =>
+      prev.includes(tooth)
+        ? prev.filter((t) => t !== tooth)
+        : [...prev, tooth],
+    );
+  };
+
+  const toggleFace = (face: string) => {
+    setFaces((prev) =>
+      prev.includes(face)
+        ? prev.filter((f) => f !== face)
+        : [...prev, face],
+    );
+  };
+
+  const superiorTeeth = formDentition === "permanente" ? PERMANENT_SUPERIOR : DECIDUOUS_SUPERIOR;
+  const inferiorTeeth = formDentition === "permanente" ? PERMANENT_INFERIOR : DECIDUOUS_INFERIOR;
+  const currentTeeth = formDentition === "permanente" ? PERMANENT_TEETH : DECIDUOUS_TEETH;
+
+  const toggleArcadaSuperior = () => {
+    setTeeth((prev) => {
+      const allSelected = superiorTeeth.every((t) => prev.includes(t));
+      if (allSelected) return prev.filter((t) => !superiorTeeth.includes(t));
+      return [...new Set([...prev, ...superiorTeeth])];
+    });
+  };
+
+  const toggleArcadaInferior = () => {
+    setTeeth((prev) => {
+      const allSelected = inferiorTeeth.every((t) => prev.includes(t));
+      if (allSelected) return prev.filter((t) => !inferiorTeeth.includes(t));
+      return [...new Set([...prev, ...inferiorTeeth])];
+    });
+  };
+
+  const resetForm = () => {
+    setDentistId(dentists.length > 0 ? dentists[0]!.id : "");
+    setHealthPlanId("");
+    setDate(new Date().toISOString().slice(0, 10));
+    setTreatmentId("");
+    setValue("");
+    setTeeth([]);
+    setFaces([]);
+    setNotes("");
+    setSearch("");
+    setFormDentition("permanente");
+  };
+
+  const handleSave = async () => {
+    if (!dentistId || !treatmentId || !date || !value) {
+      setError("Preencha todos os campos obrigatórios.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    try {
+      const result = await postApi<PatientTreatment>(
+        `/patients/${patientId}/treatments`,
+        {
+          dentistId,
+          treatmentId,
+          healthPlanId: healthPlanId || undefined,
+          date,
+          value: Number(value),
+          teeth: teeth.length > 0 ? teeth : undefined,
+          faces: faces.length > 0 ? faces : undefined,
+          notes: notes || undefined,
+        },
+      );
+      setTreatments((prev) => [result, ...prev]);
+      setDentitionType(formDentition);
+      resetForm();
+      setShowModal(false);
+      setError("");
+    } catch {
+      setError("Erro ao salvar tratamento.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteApi(`/patients/${patientId}/treatments/${id}`);
+      setTreatments((prev) => prev.filter((t) => t.id !== id));
+    } catch {
+      setError("Erro ao remover tratamento.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", padding: "3rem", color: "var(--color-text-secondary)" }}>
+        Carregando...
+      </div>
+    );
+  }
+
+  return (
+    <div className="treatment-tab">
+      <div className="card">
+        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+          <div className="dentition-toggle">
+            <button
+              type="button"
+              className={`dentition-toggle-btn${dentitionType === "permanente" ? " active" : ""}`}
+              onClick={() => setDentitionType("permanente")}
+            >
+              Permanente
+            </button>
+            <button
+              type="button"
+              className={`dentition-toggle-btn${dentitionType === "deciduo" ? " active" : ""}`}
+              onClick={() => setDentitionType("deciduo")}
+            >
+              Decíduo
+            </button>
+          </div>
+          <object
+            key={dentitionType}
+            ref={svgRef}
+            data={dentitionType === "permanente" ? "/odontograma_completo.svg" : "/odontograma_deciduos.svg"}
+            type="image/svg+xml"
+            aria-label="Odontograma"
+            onLoad={updateToothColors}
+            style={{ maxWidth: "100%", height: "auto", maxHeight: "280px", pointerEvents: "auto" }}
+          />
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+          <h2 style={{ fontSize: "1.125rem", fontWeight: 600, margin: 0 }}>
+            Tratamentos Registrados
+          </h2>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setShowModal(true)}
+            style={{ margin: 0 }}
+          >
+            + Adicionar Tratamento
+          </button>
+        </div>
+
+        {error && <div className="form-error">{error}</div>}
+
+        {treatments.length === 0 ? (
+          <p style={{ color: "var(--color-text-secondary)", textAlign: "center", padding: "2rem" }}>
+            Nenhum tratamento registrado.
+          </p>
+        ) : (
+          <div className="treatment-list">
+            {treatments.map((pt) => (
+              <TreatmentCard
+                key={pt.id}
+                treatment={pt}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-card card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 720 }}>
+            <h3 style={{ marginBottom: "1.5rem" }}>Adicionar Tratamento</h3>
+
+            <div className="treatment-form-grid">
+              <div className="form-row">
+                <label>Profissional *</label>
+                <select
+                  className="form-select"
+                  value={dentistId}
+                  onChange={(e) => setDentistId(e.target.value)}
+                >
+                  <option value="">Selecione...</option>
+                  {dentists.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-row">
+                <label>Plano</label>
+                <select
+                  className="form-select"
+                  value={healthPlanId}
+                  onChange={(e) => setHealthPlanId(e.target.value)}
+                >
+                  <option value="">Sem plano</option>
+                  {healthPlans.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-row">
+                <label>Data *</label>
+                <input
+                  type="date"
+                  className="form-select"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </div>
+
+              <div className="form-row" style={{ gridColumn: "1 / -1" }}>
+                <label>Tratamento *</label>
+                <div className="treatment-dropdown">
+                  <input
+                    type="text"
+                    className="form-select"
+                    value={search}
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                      setTreatmentOpen(true);
+                    }}
+                    onFocus={() => setTreatmentOpen(true)}
+                    placeholder="Digite para pesquisar tratamento..."
+                  />
+                  {treatmentOpen && (
+                    <div className="treatment-dropdown-menu">
+                      {filteredCatalog.length === 0 ? (
+                        <div className="treatment-dropdown-empty">Nenhum tratamento encontrado</div>
+                      ) : (
+                        filteredCatalog.map((t) => (
+                          <button
+                            key={t.id}
+                            type="button"
+                            className={`treatment-dropdown-item${treatmentId === t.id ? " selected" : ""}`}
+                            onClick={() => {
+                              setTreatmentId(t.id);
+                              setSearch(t.description);
+                              setTreatmentOpen(false);
+                            }}
+                          >
+                            <span className="treatment-dropdown-desc">{t.description}</span>
+                            <span className="treatment-dropdown-value">R$ {Number(t.value).toFixed(2)}</span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-row">
+                <label>Valor (R$) *</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className="form-select"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  placeholder="Autopreenchido"
+                />
+              </div>
+            </div>
+
+            <div className="form-row" style={{ marginTop: "1rem" }}>
+              <label>Dentes</label>
+              <div className="dentition-toggle" style={{ marginBottom: "0.5rem" }}>
+                <button
+                  type="button"
+                  className={`dentition-toggle-btn${formDentition === "permanente" ? " active" : ""}`}
+                  onClick={() => setFormDentition("permanente")}
+                >
+                  Permanente
+                </button>
+                <button
+                  type="button"
+                  className={`dentition-toggle-btn${formDentition === "deciduo" ? " active" : ""}`}
+                  onClick={() => setFormDentition("deciduo")}
+                >
+                  Decíduo
+                </button>
+              </div>
+              <div className="teeth-dropdown">
+                <button
+                  type="button"
+                  className="teeth-dropdown-toggle"
+                  onClick={() => setTeethOpen((prev) => !prev)}
+                >
+                  <span className="teeth-dropdown-text">
+                    {teeth.length > 0
+                      ? `${teeth.length} dente${teeth.length > 1 ? "s" : ""} selecionado${teeth.length > 1 ? "s" : ""}`
+                      : "Selecione os dentes..."}
+                  </span>
+                  <span className="teeth-dropdown-arrow">▼</span>
+                </button>
+                {teethOpen && (
+                  <div className="teeth-dropdown-menu">
+                    <div className="arch-selectors">
+                      <button
+                        type="button"
+                        className={`arch-btn${superiorTeeth.every((t) => teeth.includes(t)) ? " selected" : ""}`}
+                        onClick={toggleArcadaSuperior}
+                      >
+                        Arcada Superior
+                      </button>
+                      <button
+                        type="button"
+                        className={`arch-btn${inferiorTeeth.every((t) => teeth.includes(t)) ? " selected" : ""}`}
+                        onClick={toggleArcadaInferior}
+                      >
+                        Arcada Inferior
+                      </button>
+                    </div>
+                    <div className="teeth-dropdown-grid">
+                      {currentTeeth.map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          className={`tooth-item${teeth.includes(t) ? " selected" : ""}`}
+                          onClick={() => toggleTooth(t)}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="form-row" style={{ marginTop: "1rem" }}>
+              <label>Faces</label>
+              <div className="faces-row">
+                {FACES_OPTIONS.map((face) => (
+                  <label key={face.value} className="face-check-label">
+                    <input
+                      type="checkbox"
+                      checked={faces.includes(face.value)}
+                      onChange={() => toggleFace(face.value)}
+                    />
+                    {face.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-row" style={{ marginTop: "1rem" }}>
+              <label>Observações</label>
+              <textarea
+                className="form-textarea"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Observações do tratamento..."
+                rows={3}
+                style={{ width: "100%" }}
+              />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1.5rem" }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setShowModal(false)}
+                style={{ margin: 0 }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSave}
+                disabled={saving}
+                style={{ margin: 0 }}
+              >
+                {saving ? "Salvando..." : "Adicionar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  PLANNED: "Planejado",
+  IN_PROGRESS: "Em andamento",
+  COMPLETED: "Concluído",
+  CANCELLED: "Cancelado",
+};
+
+const STATUS_ICON: Record<string, string> = {
+  PLANNED: "",
+  IN_PROGRESS: "",
+  COMPLETED: "✓",
+  CANCELLED: "✕",
+};
+
+interface TreatmentCardProps {
+  treatment: PatientTreatment;
+  onDelete: (id: string) => void;
+}
+
+function TreatmentCard({ treatment: pt, onDelete }: TreatmentCardProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".treatment-card-menu")) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
+
+  const teethText = pt.teeth.length > 0
+    ? pt.teeth.slice(0, 5).join(", ") + (pt.teeth.length > 5 ? ` +${pt.teeth.length - 5}` : "")
+    : "";
+  const facesText = pt.faces.length > 0 ? pt.faces.join(", ") : "";
+
+  return (
+    <div className="treatment-card">
+      <div className="treatment-card-left">
+        <span className="treatment-card-date">
+          {new Date(pt.date).toLocaleDateString("pt-BR")}
+        </span>
+        <span className="treatment-card-value-mobile">
+          R$ {pt.value.toFixed(2)}
+        </span>
+        {teethText && (
+          <span className="treatment-card-teeth-mobile">{teethText}</span>
+        )}
+      </div>
+
+      <div className="treatment-card-center">
+        <div className="treatment-card-name">{pt.treatment.description}</div>
+        <div className="treatment-card-meta">
+          {pt.healthPlan && (
+            <span className="treatment-card-plan">{pt.healthPlan.name}</span>
+          )}
+          <span className="treatment-card-value">
+            R$ {pt.value.toFixed(2)}
+          </span>
+          <span className="treatment-card-dentist">{pt.dentist.name}</span>
+          {facesText && (
+            <span className="treatment-card-faces">Faces: {facesText}</span>
+          )}
+        </div>
+      </div>
+
+      <div className="treatment-card-info-desktop">
+        {teethText && (
+          <span className="treatment-card-teeth">{teethText}</span>
+        )}
+        <span className="treatment-card-value-desktop">R$ {pt.value.toFixed(2)}</span>
+      </div>
+
+      <div className="treatment-card-status">
+        <span className={`treatment-status treatment-status--${pt.status.toLowerCase()}`}>
+          {STATUS_ICON[pt.status] && (
+            <span className="treatment-status-icon">{STATUS_ICON[pt.status]}</span>
+          )}
+          {STATUS_LABEL[pt.status] ?? pt.status}
+        </span>
+      </div>
+
+      <div className="treatment-card-menu">
+        <button
+          type="button"
+          className="treatment-card-menu-btn"
+          onClick={() => setMenuOpen((prev) => !prev)}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 10.833a.833.833 0 1 0 0-1.667.833.833 0 0 0 0 1.667ZM10 5a.833.833 0 1 0 0-1.667A.833.833 0 0 0 10 5ZM10 16.666A.833.833 0 1 0 10 15a.833.833 0 0 0 0 1.666Z" />
+          </svg>
+        </button>
+        {menuOpen && (
+          <div className="treatment-card-menu-dropdown">
+            <button
+              type="button"
+              className="treatment-card-menu-item treatment-card-menu-item--danger"
+              onClick={() => {
+                onDelete(pt.id);
+                setMenuOpen(false);
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M2 4h12M5.333 4V2.667a1.333 1.333 0 0 1 1.334-1.334h2.666a1.333 1.333 0 0 1 1.334 1.334V4m2 0v9.333a1.333 1.333 0 0 1-1.334 1.334H4.667a1.333 1.333 0 0 1-1.334-1.334V4h9.334Z" />
+              </svg>
+              Remover
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

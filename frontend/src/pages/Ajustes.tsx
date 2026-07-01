@@ -3,15 +3,17 @@ import Settings from "./Settings";
 import Permissions from "./Permissions";
 import Users from "./Users";
 import AnamnesisList from "./AnamnesisList";
+import TreatmentSettings from "./TreatmentSettings";
 import { useAuth } from "../contexts/AuthContext";
 
-type Tab = "clinica" | "permissoes" | "usuarios" | "anamneses";
+type Tab = "clinica" | "permissoes" | "usuarios" | "anamneses" | "tratamentos";
 
 const TABS: { key: Tab; label: string; adminOnly?: boolean }[] = [
   { key: "clinica", label: "Informações da Clínica" },
   { key: "permissoes", label: "Permissões", adminOnly: true },
   { key: "usuarios", label: "Usuários", adminOnly: true },
   { key: "anamneses", label: "Anamneses", adminOnly: true },
+  { key: "tratamentos", label: "Tratamentos", adminOnly: true },
 ];
 
 function Ajustes() {
@@ -41,6 +43,7 @@ function Ajustes() {
         {activeTab === "permissoes" && <Permissions />}
         {activeTab === "usuarios" && <Users />}
         {activeTab === "anamneses" && <AnamnesisList />}
+        {activeTab === "tratamentos" && <TreatmentSettings />}
       </div>
     </div>
   );

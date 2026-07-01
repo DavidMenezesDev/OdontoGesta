@@ -13,6 +13,23 @@ enum UserRole {
   RECEP
   FINANCE
 }
+enum TreatmentClass {
+  NONE
+  DIAGNOST
+  ODONTO_CIRUR
+  ODONTO_PREVENTIVA
+  ODONTO_REST 
+  ODONTO_PEDIAT
+  ORTOD_ORTOP
+  PAC_ESPEC
+}
+
+enum PatientTreatmentStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
 
 enum AppointmentStatus {
   SCHEDULED
@@ -38,6 +55,7 @@ model User {
   enterprise   Enterprise   @relation(fields: [enterpriseId], references: [id])
   appointments Appointment[]
   userPermissions UserPermission[]
+  patientTreatments PatientTreatment[]
 
   @@map("users")
 }
@@ -70,6 +88,7 @@ model Patient {
   appointments Appointment[]
   healthPlan   HealthPlan?  @relation(fields: [healthPlanId], references: [id])
   anamneses    PatientAnamnesis[]
+  patientTreatments PatientTreatment[]
 
   @@map("patients")
 }
@@ -84,7 +103,8 @@ model HealthPlan {
 
   enterprise Enterprise @relation(fields: [enterpriseId], references: [id])
   patients   Patient[]
-
+  treatments Treatment[]
+  patientTreatments PatientTreatment[]
   @@map("health_plans")
 }
 
@@ -112,15 +132,44 @@ model Appointment {
 model Treatment {
   id           String   @id @default(uuid())
   enterpriseId String   @map("enterprise_id")
+  class        TreatmentClass @default(NONE)
   description  String
   value        Decimal
+  cost         Decimal
   notes        String?
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
+  healthPlans HealthPlan[]
   enterprise Enterprise @relation(fields: [enterpriseId], references: [id])
+  patientTreatments PatientTreatment[]
 
   @@map("treatments")
+}
+
+model PatientTreatment {
+  id           String   @id @default(uuid())
+  enterpriseId String   @map("enterprise_id")
+  patientId    String   @map("patient_id")
+  dentistId    String   @map("dentist_id")
+  treatmentId  String   @map("treatment_id")
+  healthPlanId String?  @map("health_plan_id")
+  date         DateTime
+  value        Decimal
+  teeth        Json?
+  faces        Json?
+  notes        String?
+  status       PatientTreatmentStatus @default(PLANNED)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  patient    Patient     @relation(fields: [patientId], references: [id])
+  dentist    User        @relation(fields: [dentistId], references: [id])
+  treatment  Treatment   @relation(fields: [treatmentId], references: [id])
+  healthPlan HealthPlan? @relation(fields: [healthPlanId], references: [id])
+  enterprise Enterprise  @relation(fields: [enterpriseId], references: [id])
+
+  @@map("patient_treatments")
 }
 
 model Permission {
@@ -267,6 +316,9 @@ model Enterprise {
   healthPlans  HealthPlan[]
   questions    Question[]
   anamneses    Anamnesis[]
+  patientTreatments PatientTreatment[]
 
   @@map("enterprises")
 }
+
+ 

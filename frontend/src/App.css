@@ -937,6 +937,131 @@ fieldset {
   width: 100%;
 }
 
+/* ─── Treatment Settings ─── */
+
+.treatment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.treatment-desc {
+  max-width: 400px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.treatment-input {
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  width: 100%;
+  min-width: 70px;
+  transition: border-color 0.15s;
+}
+
+.treatment-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.treatment-notes {
+  max-width: 200px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treatment-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.treatment-class-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.treatment-class-badge--none {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.treatment-class-badge--diagnost {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.treatment-class-badge--odonto_cirur {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.treatment-class-badge--odonto_preventiva {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.treatment-class-badge--odonto_rest {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.treatment-class-badge--odonto_pediat {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.treatment-class-badge--ortod_ortop {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.treatment-class-badge--pac_espec {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.treatment-filters {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.treatment-search {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-width: 240px;
+  transition: border-color 0.15s;
+}
+
+.treatment-search:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.treatment-search::placeholder {
+  color: #94a3b8;
+}
+
 /* ─── User Permissions Modal ─── */
 
 .perm-modal-grid {
@@ -1239,4 +1364,518 @@ fieldset {
   flex-direction: column;
   gap: 0.75rem;
   background: var(--color-bg);
+}
+
+/* ─── Treatment Tab ─── */
+
+.treatment-tab {
+  width: 100%;
+}
+
+.treatment-form-card {
+  max-width: 720px;
+}
+
+.treatment-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.teeth-dropdown {
+  position: relative;
+  max-width: 328px;
+}
+
+.teeth-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  text-align: left;
+  outline: none;
+}
+
+.teeth-dropdown-toggle:hover,
+.teeth-dropdown-toggle:focus {
+  border-color: var(--color-primary);
+}
+
+.teeth-dropdown-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teeth-dropdown-arrow {
+  font-size: 0.625rem;
+  color: var(--color-text-secondary);
+  transition: transform 0.15s;
+}
+
+.teeth-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  width: 328px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 0.75rem;
+}
+
+.arch-selectors {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 0.75rem;
+}
+
+.arch-btn {
+  flex: 1;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.arch-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.arch-btn.selected {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.dentition-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0.75rem;
+  justify-content: center;
+}
+
+.dentition-toggle-btn {
+  padding: 0.375rem 1rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dentition-toggle-btn:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.dentition-toggle-btn:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.dentition-toggle-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.teeth-dropdown-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.25rem;
+}
+
+.tooth-item {
+  padding: 0.25rem 0;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.tooth-item:hover {
+  border-color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.tooth-item.selected {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* ─── Treatment Combobox ─── */
+
+.treatment-dropdown {
+  position: relative;
+}
+
+.treatment-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  width: 100%;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.treatment-dropdown-empty {
+  padding: 0.75rem 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.treatment-dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.treatment-dropdown-item:hover {
+  background: var(--color-bg);
+}
+
+.treatment-dropdown-item.selected {
+  background: rgba(37, 99, 235, 0.08);
+  font-weight: 600;
+}
+
+.treatment-dropdown-desc {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treatment-dropdown-value {
+  margin-left: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.tooth-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooth-btn:hover {
+  border-color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.tooth-btn.selected {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.faces-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.face-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.face-check-label input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.treatment-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.treatment-status-icon {
+  font-size: 0.6875rem;
+}
+
+.treatment-status--planned {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.treatment-status--in_progress {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.treatment-status--completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.treatment-status--cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ─── Treatment Card List ─── */
+
+.treatment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.treatment-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  transition: border-color 0.15s;
+}
+
+.treatment-card:hover {
+  border-color: var(--color-primary);
+}
+
+.treatment-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 80px;
+}
+
+.treatment-card-date {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.treatment-card-value-mobile {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  display: none;
+}
+
+.treatment-card-teeth-mobile {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.treatment-card-center {
+  flex: 1;
+  min-width: 0;
+}
+
+.treatment-card-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treatment-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.treatment-card-plan,
+.treatment-card-faces {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.treatment-card-value {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.treatment-card-dentist {
+  color: var(--color-text-secondary);
+}
+
+.treatment-card-info-desktop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 100px;
+}
+
+.treatment-card-teeth {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.treatment-card-value-desktop {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  display: none;
+}
+
+.treatment-card-status {
+  display: flex;
+  align-items: center;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.treatment-card-menu {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+}
+
+.treatment-card-menu-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.treatment-card-menu-btn:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.treatment-card-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  min-width: 180px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 0.25rem;
+}
+
+.treatment-card-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.treatment-card-menu-item:hover {
+  background: var(--color-bg);
+}
+
+.treatment-card-menu-item--danger {
+  color: #dc2626;
+}
+
+.treatment-card-menu-item--danger:hover {
+  background: #fef2f2;
+}
+
+@media (max-width: 768px) {
+  .treatment-card {
+    flex-wrap: wrap;
+  }
+
+  .treatment-card-value-mobile {
+    display: inline;
+  }
+
+  .treatment-card-info-desktop {
+    display: none;
+  }
+
+  .treatment-card-status {
+    min-width: auto;
+    margin-left: auto;
+  }
 }

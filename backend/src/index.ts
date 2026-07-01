@@ -13,6 +13,8 @@ import createUsersRouter from "./routes/Users/createUsers.js";
 import permissionsRouter from "./routes/Permissions/index.js";
 import anamnesisRouter from "./routes/Anamnesis/index.js";
 import patientAnamnesisRouter from "./routes/PatientAnamnesis/index.js";
+import treatmentsRouter from "./routes/Treatments/index.js";
+import patientTreatmentsRouter from "./routes/PatientTreatments/index.js";
 
 const app = express();
 const PORT = process.env["PORT"] ?? 3000;
@@ -37,6 +39,8 @@ app.use("/api/users", createUsersRouter);
 app.use("/api/permissions", permissionsRouter);
 app.use("/api/anamnesis", anamnesisRouter);
 app.use("/api/patients", patientAnamnesisRouter);
+app.use("/api/treatments", treatmentsRouter);
+app.use("/api/patients", patientTreatmentsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
