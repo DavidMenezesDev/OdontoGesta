@@ -1,5 +1,6 @@
+import type { TreatmentClass } from "../../../generated/prisma/enums.js";
 import { prisma } from "../../lib/prisma.js";
-
+import { PROCEDIMENTOS, CATEGORIAS } from "./cbhpo.js";
 export interface TreatmentResult {
   id: string;
   class: string;
@@ -17,8 +18,32 @@ export interface UpdateTreatmentParams {
   class: string;
   notes?: string | null;
 }
-
+export async function seedTreatments(enterpriseId: string): Promise<void>{
+  for(const p of PROCEDIMENTOS){
+    const saveTreatmentsSeed = await prisma.treatment.create({
+      data:{
+        description: p.procedimento,
+        value: p.valor_total,
+        cost: 0,
+        notes: null,
+        class: p.codigo as TreatmentClass,
+        
+        enterprise:{
+          connect:{
+            id: enterpriseId,
+          }
+        }
+      }
+    })
+  }
+  
+}
 export async function listTreatments(enterpriseId: string): Promise<TreatmentResult[]> {
+  const existingCount = await prisma.treatment.count({ where: { enterpriseId } });
+  console.log(existingCount)
+  if(existingCount === 0){
+    await seedTreatments(enterpriseId)
+  }
   const treatments = await prisma.treatment.findMany({
     where: { enterpriseId },
     orderBy: [{ class: "asc" }, { description: "asc" }],
@@ -35,7 +60,6 @@ export async function listTreatments(enterpriseId: string): Promise<TreatmentRes
     updatedAt: t.updatedAt,
   }));
 }
-
 export async function updateTreatment(
   id: string,
   enterpriseId: string,
