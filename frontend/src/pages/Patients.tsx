@@ -44,11 +44,11 @@ function Patients() {
         </div>
 
         {loading ? (
-          <div style={{ padding: "2rem", textAlign: "center", color: "var(--color-text-secondary)" }}>
+          <div style={{ padding: "2.5rem", textAlign: "center", color: "var(--color-text-secondary)" }}>
             Carregando...
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: "2rem", textAlign: "center", color: "var(--color-text-secondary)" }}>
+          <div style={{ padding: "2.5rem", textAlign: "center", color: "var(--color-text-secondary)" }}>
             {search ? "Nenhum paciente encontrado." : "Nenhum paciente cadastrado."}
           </div>
         ) : (

@@ -299,16 +299,7 @@ function AnamnesisTab({
       </div>
 
       {isEditing && (
-        <div
-          style={{
-            background: "#dbeafe",
-            color: "#1e40af",
-            padding: "0.5rem 0.75rem",
-            borderRadius: "var(--radius)",
-            fontSize: "0.8125rem",
-            marginBottom: "1rem",
-          }}
-        >
+        <div className="form-success" style={{ marginBottom: "1rem" }}>
           Anamnese já preenchida. Edite as respostas abaixo e salve para atualizar.
         </div>
       )}
@@ -334,7 +325,7 @@ function AnamnesisTab({
                       {question.pergunta}
                     </span>
                     {aq.obrigatorio && (
-                      <span style={{ color: "#dc2626", marginLeft: "0.25rem" }}>*</span>
+                      <span style={{ color: "var(--color-accent)", marginLeft: "0.25rem" }}>*</span>
                     )}
                   </div>
 
@@ -347,13 +338,13 @@ function AnamnesisTab({
                   {question.alerta > 1 && question.labelAlerta && (
                     <div
                       style={{
-                        fontSize: "0.75rem",
-                        color: question.alerta === 2 ? "#92400e" : "#991b1b",
+                        fontSize: "0.8125rem",
+                        color: question.alerta === 2 ? "var(--color-warning)" : "var(--color-danger)",
                         marginBottom: "0.5rem",
                         fontWeight: 600,
                       }}
                     >
-                      ⚠ {question.labelAlerta}
+                      {question.labelAlerta}
                     </div>
                   )}
 
@@ -383,16 +374,8 @@ function AnamnesisTab({
                   ) : question.tipo === 2 ? (
                     <input
                       type="text"
-                      style={{
-                        width: "100%",
-                        padding: "0.625rem 0.75rem",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: "var(--radius)",
-                        fontSize: "0.875rem",
-                        background: "var(--color-bg)",
-                        color: "var(--color-text)",
-                        boxSizing: "border-box",
-                      }}
+                      className="form-select"
+                      style={{ width: "100%", boxSizing: "border-box" }}
                       value={value}
                       onChange={(e) => onAnswerChange(question.id, e.target.value)}
                       placeholder="Digite sua resposta..."

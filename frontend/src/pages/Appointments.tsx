@@ -19,12 +19,12 @@ const STATUS_LABELS: Record<AppointmentStatus, string> = {
 };
 
 const STATUS_COLORS: Record<AppointmentStatus, string> = {
-  SCHEDULED: "#2563eb",
-  CONFIRMED: "#22c55e",
-  IN_PROGRESS: "#f59e0b",
-  COMPLETED: "#64748b",
-  CANCELLED: "#ef4444",
-  NO_SHOW: "#94a3b8",
+  SCHEDULED: "var(--color-primary)",
+  CONFIRMED: "var(--color-success)",
+  IN_PROGRESS: "var(--color-warning)",
+  COMPLETED: "var(--color-text-secondary)",
+  CANCELLED: "var(--color-danger)",
+  NO_SHOW: "var(--color-text-secondary)",
 };
 
 function getDaysInMonth(year: number, month: number): number {
@@ -495,7 +495,7 @@ function Appointments() {
                             style={{ marginLeft: "1.5rem" }}
                           />
                         )}
-                        <p style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)", marginTop: "0.25rem" }}>
+                        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", marginTop: "0.25rem" }}>
                           Se a data cair em fim de semana, será movida para o próximo dia útil.
                         </p>
                       </div>
@@ -525,7 +525,7 @@ function Appointments() {
             {formError && <div className="form-error">{formError}</div>}
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <label style={{ fontSize: "0.875rem", fontWeight: 500 }}>Quando?</label>
+              <label style={{ fontSize: "0.9375rem", fontWeight: 600 }}>Quando?</label>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                 <label className="follow-up-option">
@@ -569,7 +569,7 @@ function Appointments() {
                 )}
               </div>
 
-              <p style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)", marginTop: "0.25rem" }}>
+              <p style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", marginTop: "0.25rem" }}>
                 Se a data cair em fim de semana, será movida para o próximo dia útil.
               </p>
 

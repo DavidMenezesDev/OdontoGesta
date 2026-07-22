@@ -35,8 +35,12 @@ function Login({ onShowRegister }: LoginProps) {
   return (
     <div className="page-center">
       <div className="card form-card">
-        <h2>Entrar</h2>
-        <p className="form-subtitle">Acesse sua conta no OdontoGestão</p>
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: "1.625rem", marginBottom: "0.25rem" }}>Bem-vindo de volta</h2>
+          <p className="form-subtitle">
+            Acesse o painel de gestão da sua clínica
+          </p>
+        </div>
 
         {error && <div className="form-error">{error}</div>}
 
@@ -44,12 +48,26 @@ function Login({ onShowRegister }: LoginProps) {
           <fieldset disabled={loading}>
             <div className="form-row">
               <label htmlFor="email">Email</label>
-              <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required />
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
+                required
+              />
             </div>
 
             <div className="form-row">
               <label htmlFor="password">Senha</label>
-              <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Sua senha" required />
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Sua senha"
+                required
+              />
             </div>
 
             <button type="submit" className="btn btn-primary" disabled={loading}>

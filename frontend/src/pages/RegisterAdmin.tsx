@@ -95,6 +95,20 @@ function RegisterAdmin({ onBackToLogin }: RegisterAdminProps) {
     return (
       <div className="page-center">
         <div className="card success-card">
+          <div style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "50%",
+            background: "var(--color-success-light)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 1.5rem",
+          }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
           <h2>Conta criada com sucesso!</h2>
           <div className="success-details">
             <div className="detail-group">
@@ -119,10 +133,12 @@ function RegisterAdmin({ onBackToLogin }: RegisterAdminProps) {
   return (
     <div className="page-center">
       <div className="card form-card">
-        <h2>Criar conta de administrador</h2>
-        <p className="form-subtitle">
-          Crie sua conta de administrador. Uma nova empresa será registrada automaticamente.
-        </p>
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: "1.625rem", marginBottom: "0.25rem" }}>Criar conta de administrador</h2>
+          <p className="form-subtitle">
+            Crie sua conta de administrador. Uma nova empresa será registrada automaticamente.
+          </p>
+        </div>
 
         {error && <div className="form-error">{error}</div>}
 
@@ -157,7 +173,7 @@ function RegisterAdmin({ onBackToLogin }: RegisterAdminProps) {
 
             <div className="form-row">
               <label htmlFor="companyName">Nome da empresa</label>
-              <input id="companyName" name="companyName" value={form.companyName} onChange={handleChange} placeholder="Clínica OdontoGesta Ltda" />
+              <input id="companyName" name="companyName" value={form.companyName} onChange={handleChange} placeholder="Clínica OdontoGestão Ltda" />
             </div>
 
             <div className="form-row">
@@ -172,7 +188,7 @@ function RegisterAdmin({ onBackToLogin }: RegisterAdminProps) {
         </form>
 
         {onBackToLogin && (
-          <p className="form-footer" style={{ marginTop: "1rem" }}>
+          <p className="form-footer">
             Já tem conta?{" "}
             <button type="button" className="link-btn" onClick={onBackToLogin}>
               Fazer login

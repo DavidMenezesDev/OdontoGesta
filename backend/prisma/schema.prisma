@@ -320,5 +320,20 @@ model Enterprise {
 
   @@map("enterprises")
 }
+model Budget {
+  id           String @id @default(uuid())
+  budgetCode   Int    @default(autoincrement()) @unique
+  
 
- 
+
+
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+}
+model PatientBudget {
+  id            String @id @default(uuid())
+  enterpriseId  String @map("enterprise_id")
+  patientId     String @map("patient_id")
+  dentistId     String   @map("dentist_id")
+}
